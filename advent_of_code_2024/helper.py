@@ -1,6 +1,6 @@
 import os
 
-def load_input(day):
-    '''load pre-downloaded puzzle input for specified day'''
+def load_input(filename):
+    '''load puzzle or test input for specified filename'''
 
-    return open(os.path.join('inputs', f'day{day:0>2}.txt'))
+    return open(os.path.join('inputs', f'{filename}.txt'))
