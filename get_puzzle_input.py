@@ -69,12 +69,15 @@ def get_day_of_month():
 
     return current_day
 
+
 if __name__ == '__main__':
+
     try:
         day = int(sys.argv[1])
     except:
         day = get_day_of_month()
+
     create_blank_test_file(day)
-    # create_script(day)
-    # r = download_puzzle_input(day)
-    # save_puzzle_input(r.text, day)
+    create_script(day)
+    r = download_puzzle_input(day)
+    save_puzzle_input(r.text, day)
