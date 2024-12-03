@@ -2,14 +2,19 @@ import numpy as np
 from helper import load_input
 
 def is_safe(row):
+    """
+    Check if a row is safe.
+    A row is considered safe if it is strictly increasing or strictly decreasing,
+    and no two adjacent numbers differ by more than 3.
+    """
     increasing = all(row[i] < row[i+1] and row[i+1] - row[i] <= 3 for i in range(len(row) - 1))
     decreasing = all(row[i] > row[i+1] and row[i] - row[i+1] <= 3 for i in range(len(row) - 1))
     return increasing or decreasing
 
-def part1(contents):
-    # Load the input data
-    data = contents.read()
-
+def part1(data):
+    """
+    Process the input data and count the number of safe rows.
+    """
     # Split the data into rows
     rows = data.strip().split('\n')
 
@@ -19,12 +24,14 @@ def part1(contents):
     # Determine if each row is safe
     safe_rows = [is_safe(row) for row in list_of_lists]
 
+    # Count the number of safe rows
     return sum(safe_rows)
 
-def part2(contents):
-    # Load the input data
-    data = contents.read()
-
+def part2(data):
+    """
+    Process the input data and count the number of safe rows.
+    A row is considered safe if it is safe as is, or if removing a single integer makes it safe.
+    """
     # Split the data into rows
     rows = data.strip().split('\n')
 
@@ -46,19 +53,14 @@ def part2(contents):
                     break
             safe_rows.append(row_safe)
 
+    # Count the number of safe rows
     return sum(safe_rows)
 
 if __name__ == "__main__":
-    test_input = load_input('day02_test')
-    test_solution_part1 = part1(test_input)
-    assert test_solution_part1 == 2, test_solution_part1
+    test_input = load_input('day02_test').read()
+    assert part1(test_input) == 2
+    assert part2(test_input) == 4
     
-    test_input = load_input('day02_test')
-    test_solution_part2 = part2(test_input)
-    assert test_solution_part2 == 4, test_solution_part2
-    
-    puzzle_input = load_input('day02')
+    puzzle_input = load_input('day02').read()
     print(part1(puzzle_input))
-
-    puzzle_input = load_input('day02')
     print(part2(puzzle_input))
