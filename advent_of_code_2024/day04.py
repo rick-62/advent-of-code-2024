@@ -1,4 +1,5 @@
 from helper import load_input
+import numpy as np
 
 def part1(contents):
     grid = [list(line) for line in contents.splitlines()]
@@ -32,11 +33,51 @@ def part1(contents):
 
     return count
 
+
+def part2(contents):
+    grid = np.array([list(line) for line in contents.splitlines()])
+    rows, cols = grid.shape
+    count = 0
+
+    patterns = [
+        np.array([['M', '.', 'S'],
+                  ['.', 'A', '.'],
+                  ['M', '.', 'S']]),
+        np.array([['S', '.', 'M'],
+                  ['.', 'A', '.'],
+                  ['S', '.', 'M']]),
+        np.array([['M', '.', 'M'],
+                  ['.', 'A', '.'],
+                  ['S', '.', 'S']]),
+        np.array([['S', '.', 'S'],
+                  ['.', 'A', '.'],
+                  ['M', '.', 'M']])
+    ]
+
+    def matches_pattern(window, pattern):
+        for i in range(3):
+            for j in range(3):
+                if pattern[i, j] != '.' and window[i, j] != pattern[i, j]:
+                    return False
+        return True
+
+    for r in range(rows - 2):
+        for c in range(cols - 2):
+            window = grid[r:r+3, c:c+3]
+            for pattern in patterns:
+                if matches_pattern(window, pattern):
+                    count += 1
+
+    return count
+
 if __name__ == "__main__":
     test_input = load_input('day04_test').read()
     test_solution = part1(test_input)
     assert test_solution == 18, test_solution
+    test_solution = part2(test_input)
+    assert test_solution == 9, test_solution
 
     puzzle_input = load_input('day04').read()
     puzzle_solution = part1(puzzle_input)
     print(puzzle_solution)
+    print("Part 2:", part2(puzzle_input))
