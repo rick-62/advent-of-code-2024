@@ -60,12 +60,10 @@ def correct_update(update: list, rules: list) -> list:
             value_index = update.index(value)
             if key_index > value_index:
                 update[key_index], update[value_index] = update[value_index], update[key_index]
-                if not is_update_valid(update, rules):
-                    return correct_update(update, rules)
-                else:
-                    return update
+                return correct_update(update, rules)
         except ValueError:
             continue
+    return update
           
                    
 
