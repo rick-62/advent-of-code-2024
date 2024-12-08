@@ -9,7 +9,7 @@ import requests
 def create_script(day, directory='advent_of_code_2024'):
     '''create blank text file to be used for testing'''
 
-    template_file = "template.py"
+    template_file = f"{directory}/template.py"
     new_file = f'{directory}/day{day:0>2}.py'
 
     if not os.path.exists(new_file): 
