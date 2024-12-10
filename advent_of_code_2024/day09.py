@@ -36,18 +36,58 @@ def part1(contents):
 
     return sum([i*int(n) for i, n in enumerate(disk) if n != '.'])
         
+def parse_input_part2(contents):
+    contents = contents.strip("\n")
+
+    list1 = contents[::2]
+    blocks = []
+    for i, n in enumerate(list1):
+        block = [i] * int(n)
+        blocks.append(block)
+    
+    list2 = [int(x) for x in contents[1::2]]
+    spaces = []
+    for n in list2:
+        space = n * ['.']
+        spaces.append(space)
+
+    return blocks, spaces
 
 def part2(contents):
-    disk = parse_input(contents)
-    # Add your logic here
-    pass
+    blocks, spaces = parse_input_part2(contents)
+    
+    def move_element(lst, from_index, to_index):
+        element = lst[from_index]
+        lst[from_index] = []
+        lst.insert(to_index, element)
+        return lst
+
+
+    for block in blocks.copy()[::-1]:
+        i = blocks.index(block)
+        for j, space in enumerate(spaces):
+            if j > i:
+                break
+            remaining = len(space) - len(block)
+            if remaining >= 0:
+                blocks = move_element(blocks, i, j+1)
+                spaces.insert(j, [])
+                spaces[j+1] = spaces[j+1][:remaining]
+                blocks.insert(i+1, [])
+                spaces.insert(i+1, len(block) * ['.'])
+                break
+
+    interweaved = [val for pair in zip_longest(blocks, spaces, fillvalue=[]) for val in pair]
+    disk = np.concatenate(interweaved)
+
+    return sum([i*int(n) for i, n in enumerate(disk) if n != '.'])
 
 if __name__ == "__main__":
     test_input = load_input("day09_test").read()
     test_solution = part1(test_input)
     assert test_solution == 1928, test_solution
     test_solution = part2(test_input)
-    assert test_solution == None, test_solution
+    assert test_solution == 2858, test_solution
 
     puzzle_input = load_input("day09").read()
     puzzle_solution = part1(puzzle_input)
