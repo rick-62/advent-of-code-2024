@@ -1,5 +1,6 @@
 from helper import load_input
 import uuid
+from functools import lru_cache
 
 def parse_input_to_dict(input_string):
     numbers = [int(x) for x in input_string.split()]
@@ -15,6 +16,11 @@ def parse_input_to_dict(input_string):
 
     return result_dict
 
+def parse_input_to_list(input_string):
+    numbers = [int(x) for x in input_string.split()]
+    return numbers
+
+@lru_cache(maxsize=None)
 def apply_rules(number):
     if number == 0:
         return 1
@@ -26,6 +32,20 @@ def apply_rules(number):
         return first_half, second_half
     else:
         return number * 2024
+    
+
+@lru_cache(maxsize=None)
+def apply_rules_p2(number):
+    if number == 0:
+        return [1]
+    elif len(str(number)) % 2 == 0:
+        str_number = str(number)
+        mid = len(str_number) // 2
+        first_half = int(str_number[:mid])
+        second_half = int(str_number[mid:])
+        return [first_half, second_half]
+    else:
+        return [number * 2024]
 
 def part1(contents, blinks=25):
     stones_dct = parse_input_to_dict(contents)
@@ -37,12 +57,25 @@ def part1(contents, blinks=25):
             else:
                 new_uuid = uuid.uuid4()
                 stones_dct[current_uuid] = (new_number[0], new_uuid)
-                stones_dct[new_uuid] = (new_number[1], next_uuid)       
+                stones_dct[new_uuid] = (new_number[1], next_uuid) 
     return len(stones_dct)
     
 
-def part2(contents):
-    pass
+def part2(contents, blinks=50):
+    original_stones = parse_input_to_list(contents)
+    total = 0
+    for start in original_stones:
+        list2 = []
+        list1 = [start]
+        for i in range(blinks):
+            for stone in list1:
+                list2.extend(apply_rules_p2(stone))
+            list1, list2 = list2, []
+        total += len(list1)
+
+    return total
+
+
 
 if __name__ == "__main__":
 
