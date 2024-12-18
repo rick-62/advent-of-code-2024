@@ -16,7 +16,17 @@ def print_2D_array(array, particles):
         else:
             array[x, y] = str(int(array[x, y]) + 1)
     for row in array.T:
-        print("".join(row))
+        print("".join(row), flush=True)
+
+def update_2D_array(array, particles):
+    array.fill(".") 
+    for particle in particles:
+        x, y = particle.position
+        if array[x, y] == ".":  # If the position is not already occupied
+            array[x, y] = "1"
+        else:
+            array[x, y] = str(int(array[x, y]) + 1)
+    return array
 
 class Particle:
     def __init__(self, position, velocity):
@@ -87,18 +97,32 @@ def part1(contents, iterations=100, shape=(101, 103)):
         print_2D_array(array, particles)
         print(f"Iteration: {i+1}")
     
-    array = replace_middle_row_and_column(array.T)
+    array = replace_middle_row_and_column(array)
     sum_q1, sum_q2, sum_q3, sum_q4 = sum_quadrants(array)
     result = sum_q1 * sum_q2 * sum_q3 * sum_q4
     return int(result)
 
+
+def check_vertical_symmetry(array):
+    rows, cols = array.shape
+    mid_col = cols // 2
+
+    # Define the four quadrants
+    h1 = array[:, :mid_col]
+    h2 = array[:, mid_col+1:]
     
+    # Check if the left half is the mirror image of the right half
+    
+    return np.array_equal(h1, np.fliplr(h2))
+
+def check_all_ones(array):
+    ones = [int(x) for row in array for x in row if x.isdigit()]
+    return all(x == 1 for x in ones)
+
 
 def part2(contents, shape=(101, 103)):
     particles = parse_input(contents)
     array = create_2D_array(shape)
-    # print_2D_array(array, particles)
-    # print("Iteration: 0")
     i = 0
     while True:
         i += 1
@@ -109,13 +133,11 @@ def part2(contents, shape=(101, 103)):
             new_x = (x + dx) % shape[0]
             new_y = (y + dy) % shape[1]
             particle.position = (new_x, new_y)
-            
-        sum_q1, sum_q2, sum_q3, sum_q4 = sum_quadrants(array.T)
-        if sum_q1 == sum_q2 and sum_q3 == sum_q4:
-            print_2D_array(array, particles)
-            print(f"Iteration: {i+1}")
-            input("Press Enter to continue...")
-    return int(result)
+        update_2D_array(array, particles)
+
+        if check_all_ones(array):
+            return i
+    
 
 
 if __name__ == "__main__":
