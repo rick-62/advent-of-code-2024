@@ -106,15 +106,18 @@ def part1(contents):
 def part2(contents):
     program = parse_input(contents)
     original_program = ','.join([str(x) for x in program.program])
-    for i in itertools.count(start=175900000000000, step=1):
+    print(original_program)
+    for i in itertools.count(start=164278899113000, step=1):
     # i = int(input("register_a: "))
     # while True:
         program.reset()
         program.register_a = i
         output = program.run()
-        # print(output)
+        # print(output, "(", i, ")")
         if output == original_program:
             return i
+        # input()
+
         # print(output, "output")
         # print(original_program, "original")
         # i = int(input("Try again. register_a: "))
