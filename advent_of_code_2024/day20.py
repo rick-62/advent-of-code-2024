@@ -2,6 +2,7 @@ import heapq
 
 import numpy as np
 from helper import load_input, print_map
+from collections import Counter
 
 def parse_input(text):
     lines = text.strip().split('\n')
@@ -79,21 +80,42 @@ def find_hashtags_between_Os(puzzle_map):
 
 def part1(contents):
     puzzle_map = parse_input(contents)
-    print_map(puzzle_map)
+    # print_map(puzzle_map)
     start, end = find_start_end(puzzle_map)
     path = a_star_search(puzzle_map, start, end)
+    path_length = len(path) - 1
     for coord in path:
         puzzle_map[coord] = 'O'
-        print_map(puzzle_map, wait=0.01)
+        # print_map(puzzle_map, wait=0.01)
     shortcuts = find_hashtags_between_Os(puzzle_map)
     for coord in shortcuts:
         puzzle_map[coord] = 'x'
-        print_map(puzzle_map, wait=0.01)
+        # print_map(puzzle_map, wait=0.01)
     puzzle_map[puzzle_map == 'O'] = '.'
-    print_map(puzzle_map, wait=0.01)
+    # print_map(puzzle_map, wait=0.01)
     puzzle_map[puzzle_map == 'x'] = '#'
-    print_map(puzzle_map, wait=0.01)
-    pass
+    # print_map(puzzle_map, wait=0.01)
+    savings = []
+    for i, coord in enumerate(shortcuts):
+        print(f"Checking shortcut {i + 1}/{len(shortcuts)}", end='\r')
+        puzzle_map[coord] = '.'
+        path = a_star_search(puzzle_map, start, end)
+        # print_map(puzzle_map, wait=0.01)
+        savings.append(path_length - len(path) + 1)
+        puzzle_map[coord] = '#'
+
+    print()
+
+    # cheats = Counter(savings)
+    # for k, v in cheats.items():
+    #     print(f"Saving {k} picoseconds: {v}")
+
+    solution = len([s for s in savings if s >= 100])
+    return solution
+    
+
+
+
 
 def part2(contents):
     pass
@@ -103,7 +125,7 @@ if __name__ == "__main__":
 
     test_input = load_input("day20_test").read()
     test_solution = part1(test_input)
-    assert test_solution == None, test_solution
+    assert test_solution == 0, test_solution
     test_solution = part2(test_input)
     assert test_solution == None, test_solution
 
